@@ -71,7 +71,8 @@ void ZHbb_controlPlots(){
         hist_total_bks->Draw("hist");
         hist_data ->Draw("PEsame");
 
-		hist_signal->SetLineWidth(2);
+		hist_signal ->Scale(5e2);
+		hist_signal->SetLineWidth(3);
 		hist_signal->SetLineStyle(2);
 		//hist_signal->SetFillColor(0);
 		hist_signal -> Draw("SAME");
