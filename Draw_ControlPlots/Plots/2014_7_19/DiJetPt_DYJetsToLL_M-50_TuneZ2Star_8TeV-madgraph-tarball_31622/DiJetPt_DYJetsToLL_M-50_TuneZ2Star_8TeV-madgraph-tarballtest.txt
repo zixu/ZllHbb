@@ -1,0 +1,4 @@
+total event number: 3987218
+     cross-section: 3504.6
+              lumi: 19624
+      event weight: 17.2487

@@ -1,0 +1,4 @@
+total event number: 100000
+     cross-section: 1
+              lumi: 19624
+      event weight: 0.19624
