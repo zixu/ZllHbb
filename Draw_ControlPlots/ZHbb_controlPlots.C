@@ -67,7 +67,6 @@ void ZHbb_controlPlots(){
 
 		//Draw plots
 	TCanvas* c1 = new TCanvas("c1","c1", 800, 600);
-        c1->SetLogy();
 	
         hist_total_bks->Draw("hist");
         hist_data ->Draw("PEsame");
@@ -90,6 +89,8 @@ void ZHbb_controlPlots(){
         leg->AddEntry(hist_data,"Data");
         leg->Draw();
         c1->SaveAs(Form("figures_ControlPlot_%s.png",varName[i].Data()));
+        c1->SetLogy();
+        c1->SaveAs(Form("figures_ControlPlot_%s_logY.png",varName[i].Data()));
 
         delete c1;
         delete hist_signal;
