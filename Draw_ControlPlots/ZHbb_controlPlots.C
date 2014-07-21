@@ -26,9 +26,9 @@ void ZHbb_controlPlots(){
 
     for(int i = 0; i < 9; i++){
 		//signal
-        TH1D* hist_signal  = GetHist(varName[i], path+"Step2_ZHiggs0P_M-125p6_8TeV-JHUGenV4-private_histresult.root", 2);
+        TH1D* hist_signal  = GetHist(varName[i], path+"Step2_ZHiggs0P_M-125p6_8TeV-JHUGenV4-private_histresult.root", -1);
 		//TTbar
-        TH1D* hist_TTbar  = GetHist(varName[i], path+"DiJetPt_TT_8TeV-mcatnlo_histresult.root", 4 );
+        TH1D* hist_TTbar  = GetHist(varName[i], path+"DiJetPt_TT_8TeV-mcatnlo_histresult.root", 7 );
 		//DY
         TH1D* hist_DY  = GetHist(varName[i], path+"DiJetPt_DYJetsToLL_M-50_TuneZ2Star_8TeV-madgraph-tarball_histresult.root", 6 );
 		//ZZ, WZ, WW
@@ -53,14 +53,13 @@ void ZHbb_controlPlots(){
 
         THStack * hist_total_bks = new THStack("hist_total_bks","hist_total_bks");  //      --Qun Wang @ 2014-07-15
         
-        hist_signal ->SetStats(kFALSE);
-        hist_signal ->GetXaxis()->SetTitle(varName[i]);
-        hist_signal->GetXaxis()->CenterTitle();
+        hist_TTbar ->SetStats(kFALSE);
+        hist_TTbar ->GetXaxis()->SetTitle(varName[i]);
+        hist_TTbar->GetXaxis()->CenterTitle();
 
 
         hist_data->SetMarkerStyle(20);
 
-        hist_total_bks->Add(hist_signal);
         hist_total_bks->Add(hist_TTbar);
         hist_total_bks->Add(hist_VV);
         hist_total_bks->Add(hist_singleTop);
@@ -72,11 +71,16 @@ void ZHbb_controlPlots(){
 	
         hist_total_bks->Draw("hist");
         hist_data ->Draw("PEsame");
+
+		hist_signal->SetLineWidth(2);
+		hist_signal->SetLineStyle(2);
+		//hist_signal->SetFillColor(0);
+		hist_signal -> Draw("SAME");
         // hist_data ->Draw("PE");
 		
         TLegend * leg = new TLegend(.89,.7,.99,.9);
         leg->SetFillColor(0);
-        leg->AddEntry(hist_signal,"Signal");
+        leg->AddEntry(hist_signal,"Signal","l");
         leg->AddEntry(hist_TTbar,"TT");
         leg->AddEntry(hist_DY,"DY");
         leg->AddEntry(hist_VV,"VV");
@@ -123,9 +127,9 @@ TH1D* GetHist_fromTree(char* var_name, TString fileName, double histMin, double 
 TH1D* GetHist(TString var_name, TString fileName, Int_t fillcolor, Int_t linecolor){
     TFile* infile = new TFile(fileName.Data(),"R"); 
     TH1D* hist = (TH1D*)infile->Get( TString("hist_"+var_name).Data() ) ;
-	hist->SetFillColor(fillcolor);
-	hist->SetLineColor(linecolor);
-	hist->Draw();
+	if(fillcolor>=0) hist->SetFillColor(fillcolor);
+	if(linecolor>=0) hist->SetLineColor(linecolor);
+	//hist->Draw();
     return hist;
 }
 
