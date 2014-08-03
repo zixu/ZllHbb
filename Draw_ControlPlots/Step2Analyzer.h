@@ -1051,7 +1051,7 @@ class Step2Analyzer {
 		virtual Int_t    GetEntry(Long64_t entry);
 		virtual Long64_t LoadTree(Long64_t entry);
 		virtual void     Init(TTree *tree);
-		virtual void     Loop(TString samplename, Double_t xs, Double_t lumi, bool isData);
+		virtual void     Loop(TString samplename, Double_t xs, Double_t lumi, Double_t num_entrise, bool isData);
 		virtual Bool_t   Notify();
 		virtual void     Show(Long64_t entry = -1);
 };
@@ -1589,10 +1589,12 @@ Int_t Step2Analyzer::Cut(Long64_t entry)
     if( !( H.HiggsFlag==1  ) ) return -1;
 	if( !(nhJets==2)) return -1;
     if( !( hJet_pt[0]>20 && hJet_pt[1]>20 ) ) return -1;
-    if( !( abs(hJet_eta[0])<2.5 && abs(hJet_eta[1])<2.5 && hJet_id[0]==1 && hJet_id[1]==1 && hJet_puJetIdL[0]>0 && hJet_puJetIdL[1]>0 && hJet_csv[0]>0 && hJet_csv[1]>0  ) ) return -1;
+//    if( !( abs(hJet_eta[0])<2.5 && abs(hJet_eta[1])<2.5 && hJet_id[0]==1 && hJet_id[1]==1 && hJet_puJetIdL[0]>0 && hJet_puJetIdL[1]>0 && hJet_csv[0]>0 && hJet_csv[1]>0  ) ) return -1;
+	if( !( abs(hJet_eta[0])<2.5 && abs(hJet_eta[1])<2.5 && hJet_id[0]==1 && hJet_id[1]==1 && hJet_puJetIdL[0]>0 && hJet_puJetIdL[1]>0 && TMath::Max(hJet_csv[0], hJet_csv[1])>0.679 && TMath::Min(hJet_csv[0], hJet_csv[1])>0.5  ) ) return -1;
 
-	if( H.mass<50 || H.mass>150) return -1;
-	if( V.mass<80 || V.mass>100) return -1;
+	if( !(METtype1corr.et<60))   return -1;
+	if( H.mass<95 || H.mass>150) return -1;
+	if( V.mass<75 || V.mass>105) return -1;
 
 	// Z and 2 lepton
     if( !( Vtype==0||Vtype==1)   ) return -1;
