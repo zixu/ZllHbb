@@ -14,32 +14,33 @@ using namespace std;
 
 TH1D* GetHist(TString var_name, TString fileName, Double_t rescale=1., Int_t fillcolor=1, Int_t linecolor=1);
 TH1D* GetHist(TString var_name, vector<TString> filesName, vector<Double_t> rescales, Int_t fillcolor=1, Int_t linecolor=1);
+TH1D* GetHist(TString var_name, vector<TString> filesName, Int_t fillcolor=1, Int_t linecolor=1);
 
 void ZHbb_controlPlots(){
-    TString varName[9] = {"costheta1","costheta2","costhetastar","phi","phi1","rapidityVH",
-        "mVH","Higgs_mass","Z_mass"};
+    TString varName[13] = {"costheta1","costheta2","costhetastar","phi","phi1","rapidityVH",
+        "mVH","Higgs_mass","Higgs_pt","Higgs_eta","Z_mass","Z_pt","Z_eta"};
 
 	//TString path= "./Plots/2014_7_19/";
-	TString path= "./Plots/2014_7_21/";
+	TString path= "./Plots/2014_8_2/";
 
 	//draw opt
 	//Int_t linecolor[]
 	Double_t signal_rescale=50;
-	Double_t ttbar_rescale=32852589/27519328.0000;
-	Double_t DY_rescale=30459503/28640004.0000;
+	Double_t ttbar_rescale=1.;
+	Double_t DY_rescale=1.;
 	vector<Double_t> singleTop_rescale; 
-	singleTop_rescale.push_back(259961/259923.5000);
-	singleTop_rescale.push_back(3758227/3144815.0000);
-	singleTop_rescale.push_back(497658/498080.5938);
-	singleTop_rescale.push_back(139974/140163.6406);
-	singleTop_rescale.push_back(1935072/1933425.6250);
-	singleTop_rescale.push_back(493460/493595.9062);
+	singleTop_rescale.push_back(1.);
+	singleTop_rescale.push_back(1.);
+	singleTop_rescale.push_back(1.);
+	singleTop_rescale.push_back(1.);
+	singleTop_rescale.push_back(1.);
+	singleTop_rescale.push_back(1.);
 	vector<Double_t> VV_rescale; //ZZ, WZ, WW
-	VV_rescale.push_back(9799908/9809065.0000);
-	VV_rescale.push_back(10000283/10008316.0000);
-	VV_rescale.push_back(10000431/10007584.0000);
+	VV_rescale.push_back(1.);
+	VV_rescale.push_back(1.);
+	VV_rescale.push_back(1.);
 
-    for(int i = 0; i < 9; i++){
+    for(int i = 0; i < 13; i++){
 		//signal
         TH1D* hist_signal  = GetHist(varName[i], path+"Step2_ZHiggs0P_M-125p6_8TeV-JHUGenV4-private_histresult.root",signal_rescale, -1);
 		//TTbar
@@ -63,7 +64,17 @@ void ZHbb_controlPlots(){
         TH1D* hist_singleTop = GetHist(varName[i], singleTops_file, singleTop_rescale,3 );
 
 		//data: muon 2012run
-        TH1D* hist_data = GetHist(varName[i], path+"DiJetPt_SingleMuRun2012_histresult.root" );
+		vector<TString> datas_file;
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012AAug06EdmV42_histresult.root");
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012AJul13EdmV42_histresult.root");
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012BJul13EdmV42_histresult.root");
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012C-EcalRecover_11Dec2012-v1_v2_histresult.root");
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012CAug24RerecoEdmV42_histresult.root");
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012CPromptV2TopUpEdmV42_histresult.root");
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012CPromptv2EdmV42_histresult.root");
+		datas_file.push_back(path+"DiJetPt_SingleMuRun2012D-PromptReco-v1_histresult.root");
+        //TH1D* hist_data = GetHist(varName[i], path+"DiJetPt_SingleMuRun2012_histresult.root" );
+        TH1D* hist_data = GetHist(varName[i], datas_file );
 
 
         THStack * hist_total_bks = new THStack("hist_total_bks","hist_total_bks");  //      --Qun Wang @ 2014-07-15
@@ -159,6 +170,17 @@ TH1D* GetHist(TString var_name, vector<TString> filesName, vector<Double_t> resc
 	TH1D* hist=  GetHist(var_name, filesName[0], rescales[0], fillcolor, linecolor);
 	for(Int_t i=1;i<Int_t(filesName.size());i++ ){
 		TH1D* hist_tmp=  GetHist(var_name, filesName[i], rescales[i], fillcolor, linecolor);
+		(*hist)=(*hist)+(*hist_tmp);
+	}
+	hist->SetFillColor(fillcolor);
+	hist->SetLineColor(linecolor);
+	hist->Draw();
+	return hist;
+}
+TH1D* GetHist(TString var_name, vector<TString> filesName, Int_t fillcolor, Int_t linecolor){
+	TH1D* hist=  GetHist(var_name, filesName[0], 1., fillcolor, linecolor);
+	for(Int_t i=1;i<Int_t(filesName.size());i++ ){
+		TH1D* hist_tmp=  GetHist(var_name, filesName[i], 1., fillcolor, linecolor);
 		(*hist)=(*hist)+(*hist_tmp);
 	}
 	hist->SetFillColor(fillcolor);
