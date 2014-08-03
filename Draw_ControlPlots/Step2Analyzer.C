@@ -9,7 +9,7 @@ using namespace std;
 
 
 
-void Step2Analyzer::Loop(TString samplename, Double_t xs, Double_t lumi, bool isData)
+void Step2Analyzer::Loop(TString samplename, Double_t xs, Double_t lumi, Double_t num_entrise, bool isData)
 {
 	if (fChain == 0) return;
 
@@ -83,19 +83,21 @@ void Step2Analyzer::Loop(TString samplename, Double_t xs, Double_t lumi, bool is
 
 
 	Long64_t nentries = fChain->GetEntriesFast();
-	//nentries=100000;
+	//nentries=100000;//for quickly test
 	Long64_t nbytes = 0, nb = 0;
 
 	//MC sample reweight
 	cout<<"nentries="<<nentries<<endl;
-	Double_t reweight=xs*lumi/nentries;  
+	Double_t reweight=xs*lumi/num_entrise;
+	reweight=reweight*fChain->GetEntriesFast()/nentries;
 	cout<<"reweight="<<reweight<<endl;
 	hist_Reweight.SetBinContent(1,reweight);
 	ofstream outfile(PlotDir+"/"+samplename+"test.txt");	
-	outfile << "total event number: "<<nentries << endl;
-	outfile << "     cross-section: "<< xs<<endl;
-	outfile << "              lumi: "<< lumi<<endl;
-	outfile << "      event weight: "<<reweight << endl;
+	outfile << "AOD level event number: "<<num_entrise << endl;
+	outfile << "    total event number: "<<nentries << endl;
+	outfile << "         cross-section: "<< xs<<endl;
+	outfile << "                  lumi: "<< lumi<<endl;
+	outfile << "          event weight: "<<reweight << endl;
 	outfile.close();
 
 	if(isData){
@@ -218,8 +220,11 @@ void Step2Analyzer::Loop(TString samplename, Double_t xs, Double_t lumi, bool is
 				  float mVH = (float) p4_VH.M();
 				  float rapidityVH = (float) p4_VH.Rapidity();
 				  *///        tree.Fill();
-		costheta1 = (float) a_costheta1;
-		costheta2 = (float) a_costhetastar;
+		//remap to convention of arXiv:1309.4819
+		//costheta1 = (float) a_costheta1;
+		//costheta2 = (float) a_costhetastar;
+		costheta1 = (float) a_costhetastar;
+		costheta2 = (float) a_costheta1;
 		phi = (float) a_Phi1;
 		costhetastar = TMath::Abs( (float) a_costheta2);
 		phi1 = (float) a_Phi;
@@ -269,7 +274,11 @@ void Step2Analyzer::Loop(TString samplename, Double_t xs, Double_t lumi, bool is
 	hist_mVH.Write();
 	hist_rapidityVH.Write();
 	hist_Higgs_mass.Write();
+	hist_Higgs_pt.Write();
+	hist_Higgs_eta.Write();
 	hist_Z_mass.Write();
+	hist_Z_pt.Write();
+	hist_Z_eta.Write();
 
 	//tree.Write();
 
